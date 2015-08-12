@@ -18,7 +18,7 @@ namespace NamingConventionAnalyser
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(NamingConventionAnalyserCodeFixProvider)), Shared]
     public class NamingConventionAnalyserCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string title = "Use our naming conventions";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
