@@ -92,6 +92,66 @@ namespace NamingConventionAnalyser.Test
         }
 
         [TestMethod]
+        public void IfFieldIsPascalCased_ThenTheCodeFixCamelCasesIt()
+        {
+            var originalCode = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class Widget
+        {
+            private string WonderField = ""fie"";
+        }
+    }";
+
+            var fixedCode = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class Widget
+        {
+            private string _wonderField = ""fie"";
+        }
+    }";
+
+            VerifyCSharpFix(originalCode, fixedCode);
+        }
+
+        [TestMethod]
+        public void FieldRenameIsAppliedAcrossTheCode()
+        {
+            var originalCode = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class Widget
+        {
+            private string WonderField = ""fie"";
+
+            public string AmazeMe() { return WonderField; }
+        }
+    }";
+
+            var fixedCode = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class Widget
+        {
+            private string _wonderField = ""fie"";
+
+            public string AmazeMe() { return _wonderField; }
+        }
+    }";
+
+            VerifyCSharpFix(originalCode, fixedCode);
+        }
+
+        [TestMethod]
         public void IfMultipleFieldsAreDeclared_ThenTheCodeFixFixesTheRightOne()
         {
             var originalCode = @"
