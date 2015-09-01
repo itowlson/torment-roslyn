@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -54,7 +55,7 @@ namespace OperationsMistakenForInPlace
             var typeName = member.ContainingType.ToDisplayString();
             var memberQName = typeName + "." + memberName;
 
-            if (memberQName == "string.Replace")
+            if (CommonlyMistakenForInPlace.Contains(memberQName))
             {
                 // For all such symbols, produce a diagnostic.
                 var diagnostic = Diagnostic.Create(Rule, accessNode.GetLocation(), memberQName);
@@ -62,5 +63,17 @@ namespace OperationsMistakenForInPlace
                 context.ReportDiagnostic(diagnostic);
             }
         }
+
+        private static readonly ReadOnlyCollection<string> CommonlyMistakenForInPlace = new ReadOnlyCollection<string>(new []
+        {
+            "string.Replace",
+            "System.DateTime.Add",
+            "System.DateTime.AddMilliseconds",
+            "System.DateTime.AddSeconds",
+            "System.DateTime.AddMinutes",
+            "System.DateTime.AddHours",
+            "System.DateTime.AddDays",
+            "System.DateTime.AddMonths",
+        });
     }
 }

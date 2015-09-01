@@ -86,6 +86,38 @@ namespace OperationsMistakenForInPlace.Test
             VerifyCSharpDiagnostic(test, expected);
         }
 
+        [TestMethod]
+        public void IfDateTimeAddMethodIsCalledAndResultNotAssigned_ItIsDiagnosed()
+        {
+            var test = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class C
+        {
+            public void Oops()
+            {
+                DateTime t = DateTime.UtcNow;
+                t.AddSeconds(1);
+                Console.WriteLine(s);
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = "OperationsMistakenForInPlace",
+                Message = "Result of 'System.DateTime.AddSeconds' is discarded - did you mean to assign it?",
+                Severity = DiagnosticSeverity.Warning,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", 11, 17)
+                        }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             throw new NotSupportedException();  // we're not implementing a code fix for this one (at least not for now)
