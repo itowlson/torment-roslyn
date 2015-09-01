@@ -107,6 +107,46 @@ namespace UseReadOnlyFields
                     }
                 }
             }
+
+            public override void VisitPostfixUnaryExpression(PostfixUnaryExpressionSyntax node)
+            {
+                base.VisitPostfixUnaryExpression(node);
+
+                if (node.IsKind(SyntaxKind.PostDecrementExpression) || node.IsKind(SyntaxKind.PostIncrementExpression))
+                {
+                    var postfixed = node.Operand;
+
+                    if (postfixed.IsKind(SyntaxKind.IdentifierName))
+                    {
+                        var identifier = (IdentifierNameSyntax)postfixed;
+
+                        if (identifier.Identifier.Text == _testee.Name)
+                        {
+                            _isAssigned = true;
+                        }
+                    }
+                }
+            }
+
+            public override void VisitPrefixUnaryExpression(PrefixUnaryExpressionSyntax node)
+            {
+                base.VisitPrefixUnaryExpression(node);
+
+                if (node.IsKind(SyntaxKind.PreDecrementExpression) || node.IsKind(SyntaxKind.PreIncrementExpression))
+                {
+                    var postfixed = node.Operand;
+
+                    if (postfixed.IsKind(SyntaxKind.IdentifierName))
+                    {
+                        var identifier = (IdentifierNameSyntax)postfixed;
+
+                        if (identifier.Identifier.Text == _testee.Name)
+                        {
+                            _isAssigned = true;
+                        }
+                    }
+                }
+            }
         }
     }
 }

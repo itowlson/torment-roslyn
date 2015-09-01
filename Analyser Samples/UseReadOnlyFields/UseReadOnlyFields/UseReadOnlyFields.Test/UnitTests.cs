@@ -30,6 +30,27 @@ namespace UseReadOnlyFields.Test
         }
 
         [TestMethod]
+        public void IfAFieldIsWrittenInAMethod_UsingAUnaryOperator_ThenItIsNotEligibleToBeMadeReadOnly()
+        {
+            var test = @"
+    using System;
+
+    namespace ConsoleApplication1
+    {
+        class Widget
+        {
+            private int _f1;
+            private int _f2;
+            private int _f3;
+            private int _f4;
+
+            public void Resize(int n) { ++_f1; --_f2; _f3++; _f4--; }
+        }
+    }";
+            VerifyCSharpDiagnostic(test);
+        }
+
+        [TestMethod]
         public void IfAFieldIsNotWrittenInAnyMethod_ThenItIsEligibleToBeMadeReadOnly()
         {
             var test = @"
