@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using System.Windows.Media.Animation;
+using System.Windows;
 
 namespace NagOMatic
 {
@@ -86,7 +88,7 @@ namespace NagOMatic
 
             foreach (var field in fieldsOnThisLine)
             {
-                if (fieldsThatShouldBeReadOnly.Contains(field))
+                if (fieldsThatShouldBeReadOnly.Contains(field) && !this.layer.Elements.Any(e => AdornmentTagFor(field).Equals(e.Tag)))
                 {
                     var startIndex = field.FullSpan.Start;
                     SnapshotSpan span = new SnapshotSpan(this.view.TextSnapshot, Span.FromBounds(startIndex, startIndex + field.FullSpan.Length));
@@ -105,6 +107,18 @@ namespace NagOMatic
                         {
                             Source = drawingImage,
                         };
+
+                        // If you're going to torment your colleagues, torment them good and hard
+                        image.BeginAnimation(Image.VisibilityProperty, new ObjectAnimationUsingKeyFrames
+                        {
+                            Duration = new Duration(TimeSpan.FromSeconds(1)),
+                            RepeatBehavior = RepeatBehavior.Forever,
+                            KeyFrames = new ObjectKeyFrameCollection
+                            {
+                                new DiscreteObjectKeyFrame(Visibility.Visible, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.0))),
+                                new DiscreteObjectKeyFrame(Visibility.Hidden, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0.5))),
+                            },
+                        });
 
                         // Align the image with the top of the bounds of the text geometry
                         Canvas.SetLeft(image, geometry.Bounds.Left);
